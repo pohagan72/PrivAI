@@ -1,1 +1,8 @@
-
+Flask
+pandas
+requests
+ollama
+beautifulsoup4
+tldextract
+selenium
+webdriver-manager
