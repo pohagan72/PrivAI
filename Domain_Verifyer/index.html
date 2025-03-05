@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Legal Domain Analyzer</title>
   <style>
+    /* CSS styles for the page */
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
@@ -128,6 +129,7 @@
     </div>
   </div>
   <script>
+    // Get references to HTML elements
     const dropArea = document.getElementById('dropArea');
     const fileInput = document.getElementById('fileInput');
     const selectedFile = document.getElementById('selectedFile');
@@ -139,6 +141,7 @@
     const downloadSection = document.getElementById('downloadSection');
     const downloadButton = document.getElementById('downloadButton');
     
+    // Event listeners for drag and drop functionality
     dropArea.addEventListener('dragover', e => {
       e.preventDefault();
       dropArea.classList.add('highlight');
@@ -156,8 +159,10 @@
       handleFileSelection();
     });
 
+    // Event listener for file input change
     fileInput.addEventListener('change', handleFileSelection);
 
+    // Function to handle file selection
     function handleFileSelection() {
       const file = fileInput.files[0];
       if (file) {
@@ -170,22 +175,23 @@
     }
 
     let pollingInterval;
+    // Function to start polling for progress updates
     function startPolling() {
       pollingInterval = setInterval(async () => {
         try {
-          const response = await fetch('/progress');
-          const data = await response.json();
+          const response = await fetch('/progress');  // Fetch progress from the server
+          const data = await response.json();  // Parse the JSON response
           if (data.total) {
-            const percent = Math.round((data.completed / data.total) * 100);
-            progressDiv.style.width = `${percent}%`;
-            progressDiv.textContent = `${percent}%`;
+            const percent = Math.round((data.completed / data.total) * 100);  // Calculate the percentage complete
+            progressDiv.style.width = `${percent}%`;  // Update the progress bar width
+            progressDiv.textContent = `${percent}%`;  // Update the progress bar text
             statusDiv.textContent = data.processing
-              ? `Processing: ${data.completed} of ${data.total} domains reviewed...`
-              : `Processing complete: ${data.completed} of ${data.total} domains reviewed.`;
+              ? `Processing: ${data.completed} of ${data.total} domains reviewed...`  // Update the status message if processing
+              : `Processing complete: ${data.completed} of ${data.total} domains reviewed.`;  // Update the status message when processing is complete
           }
-          if (!data.processing) {
-            clearInterval(pollingInterval);
-            downloadSection.style.display = 'block';
+          if (!data.processing) {  // If processing is complete
+            clearInterval(pollingInterval);  // Stop the polling interval
+            downloadSection.style.display = 'block';  // Show the download button
           }
         } catch (err) {
           console.error('Error polling progress:', err);
@@ -194,8 +200,9 @@
       }, 1000);
     }
 
+    // Event listener for form submission
     document.getElementById('uploadForm').onsubmit = async (e) => {
-      e.preventDefault();
+      e.preventDefault();  // Prevent the default form submission behavior
       const file = fileInput.files[0];
       if (!file) return;
       const formData = new FormData();
@@ -225,26 +232,26 @@
       }
     };
 
+    // Event listener for download button click
     downloadButton.addEventListener('click', async () => {
       try {
-        const response = await fetch('/download_result');
+        const response = await fetch('/download_result');  // Fetch the result file from the server
         if (!response.ok) {
           throw new Error("Result not ready yet.");
         }
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'legal_domain_results.csv';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        const blob = await response.blob();  // Get the response as a Blob
+        const url = URL.createObjectURL(blob);  // Create a URL for the Blob
+        const a = document.createElement('a');  // Create an anchor element
+        a.href = url;  // Set the anchor's href to the Blob URL
+        a.download = 'legal_domain_results.csv';  // Set the download filename
+        document.body.appendChild(a);  // Append the anchor to the document
+        a.click();  // Simulate a click on the anchor to trigger the download
+        a.remove();  // Remove the anchor from the document
+        URL.revokeObjectURL(url);  // Release the Blob URL
       } catch (err) {
-        alert(err.message);
+        alert(err.message);  // Display an error message if the download fails
       }
     });
   </script>
 </body>
 </html>
-
