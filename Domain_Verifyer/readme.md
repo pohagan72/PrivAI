@@ -3,8 +3,7 @@
 
 This tool analyzes a list of domains from a CSV or Excel file and determines whether they primarily operate in the legal field. It leverages web scraping, natural language processing, and the Ollama language model to classify each domain.
 
-![image](https://github.com/user-attachments/assets/ce3e5606-797c-4b07-84a1-0b116176dae8)
-
+![image](https://github.com/user-attachments/assets/27603127-88d0-4c3c-8370-7fa513224e16)
 
 ## Features
 
