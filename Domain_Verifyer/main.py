@@ -38,8 +38,8 @@ progress = {
 job_result_buffer = None
 
 # Hardcoded Azure credentials
-AZURE_OPENAI_ENDPOINT = "https://ls-s-eus-paulohagan-openai.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-08-01-preview"
-AZURE_OPENAI_API_KEY = "58f022d5560f4b3c99834c9ff5b8655d"
+AZURE_OPENAI_ENDPOINT = "Endpoint_Goes_Here"
+AZURE_OPENAI_API_KEY = "Key_Goes_Here"
 
 prompt = """Carefully review the entirety of the website text provided between the tick marks. Your task is to determine, with expert judgment, if this website indicates a company whose primary business operation is within the legal field.
 
