@@ -1,257 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Domain Analyzer</title>
-  <style>
-    /* CSS styles for the page */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f4f4f4;
-    }
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background-color: #fff;
-      padding: 25px;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .drop-area {
-      border: 2px dashed #ccc;
-      border-radius: 5px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      margin-bottom: 20px;
-      transition: border-color 0.3s;
-    }
-    .drop-area.highlight {
-      border-color: #007bff;
-    }
-    .file-input-label {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .file-input-label:hover {
-      background-color: #0056b3;
-    }
-    input[type="file"] {
-      display: none;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-      margin-top: 10px;
-    }
-    button:hover {
-      background-color: #218838;
-    }
-    .status {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #555;
-      text-align: center;
-    }
-    .progress-bar {
-      width: 100%;
-      background-color: #f3f3f3;
-      border-radius: 5px;
-      margin-top: 10px;
-      height: 30px;
-      overflow: hidden;
-    }
-    .progress {
-      width: 0;
-      height: 100%;
-      background-color: #4caf50;
-      text-align: center;
-      line-height: 30px;
-      color: white;
-      transition: width 0.4s ease;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-      text-align: center;
-    }
-    .message {
-      margin-top: 10px;
-      text-align: center;
-      color: blue;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Domain Classifier</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: #d9534f;
+            margin-top: 10px;
+        }
+        .message {
+            color: #5cb85c;
+            margin-top: 10px;
+        }
+        .progress-container {
+            margin-top: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: .25rem;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar-fill {
+            height: 20px;
+            width: 0%;
+            background-color: #007bff;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            transition: width 0.25s ease-in-out;
+        }
+        .status-message {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .download-link {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .download-link:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Legal Domain Analyzer</h1>
-    <form id="uploadForm" method="post" enctype="multipart/form-data">
-      <div class="drop-area" id="dropArea">
-        <p>Drag & drop Excel or CSV file here, or</p>
-        <label class="file-input-label">
-          Choose File
-          <input type="file" id="fileInput" name="file" accept=".xlsx,.csv" required />
-        </label>
-        <p id="selectedFile" style="margin-top:10px;color:#333;"></p>
-      </div>
-      <button type="submit" id="startButton">Start Analysis</button>
-    </form>
-    <div class="message" id="message">
-      {% if message %} {{ message }} {% else %} Awaiting file selection... {% endif %}
+    <div class="container">
+        <h1>Legal Domain Classifier</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload Excel or CSV file with a "Domain" column:</label>
+                <input type="file" id="file" name="file" accept=".xlsx,.csv">
+            </div>
+            <div class="form-group">
+                <label for="model_selector">Choose Classification Model:</label>
+                <select id="model_selector" name="model_selector">
+                    <option value="ollama_qwen:14b">Ollama (qwen:14b - Default, Local)</option>
+                    <option value="azure_openai_4o_mini">Azure OpenAI (gpt-4o-mini - Cloud, Requires API Key)</option>
+                </select>
+            </div>
+            <button type="submit">Upload and Process</button>
+        </form>
+
+        <div class="progress-container">
+            <h2>Processing Progress</h2>
+            <div class="progress-bar">
+                <div id="progressBarFill" class="progress-bar-fill">0%</div>
+            </div>
+            <p id="progressText">Not started</p>
+            <p id="rateLimitStatus" class="status-message"></p>
+            <a id="downloadLink" class="download-link" href="/download_result">Download Results</a>
+        </div>
     </div>
-    <div class="error" id="errorMessage">
-      {% if error %} {{ error }} {% endif %}
-    </div>
-    <div class="status" id="status"></div>
-    <div class="progress-bar">
-      <div class="progress" id="progress">0%</div>
-    </div>
-    <div id="downloadSection" style="text-align:center; margin-top:20px; display:none;">
-      <button id="downloadButton">Download Results</button>
-    </div>
-  </div>
-  <script>
-    // Get references to HTML elements
-    const dropArea = document.getElementById('dropArea');
-    const fileInput = document.getElementById('fileInput');
-    const selectedFile = document.getElementById('selectedFile');
-    const startButton = document.getElementById('startButton');
-    const statusDiv = document.getElementById('status');
-    const progressDiv = document.getElementById('progress');
-    const messageDiv = document.getElementById('message');
-    const errorMessageDiv = document.getElementById('errorMessage');
-    const downloadSection = document.getElementById('downloadSection');
-    const downloadButton = document.getElementById('downloadButton');
-    
-    // Event listeners for drag and drop functionality
-    dropArea.addEventListener('dragover', e => {
-      e.preventDefault();
-      dropArea.classList.add('highlight');
-    });
 
-    dropArea.addEventListener('dragleave', e => {
-      e.preventDefault();
-      dropArea.classList.remove('highlight');
-    });
+    <script>
+        let progressInterval;
 
-    dropArea.addEventListener('drop', e => {
-      e.preventDefault();
-      dropArea.classList.remove('highlight');
-      fileInput.files = e.dataTransfer.files;
-      handleFileSelection();
-    });
+        function updateProgress() {
+            fetch('/progress')
+                .then(response => response.json())
+                .then(data => {
+                    const progressBarFill = document.getElementById('progressBarFill');
+                    const progressText = document.getElementById('progressText');
+                    const downloadLink = document.getElementById('downloadLink');
+                    const rateLimitStatusElement = document.getElementById('rateLimitStatus');
 
-    // Event listener for file input change
-    fileInput.addEventListener('change', handleFileSelection);
+                    if (data.processing) {
+                        const percentage = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
+                        progressBarFill.style.width = percentage + '%';
+                        progressBarFill.textContent = percentage + '%';
+                        progressText.textContent = `Processing: ${data.completed} of ${data.total} domains completed.`;
+                        downloadLink.style.display = 'none';
+                    } else {
+                        progressBarFill.style.width = '100%';
+                        if (data.total > 0) {
+                            progressBarFill.textContent = '100%';
+                            progressText.textContent = `Processing finished. ${data.completed} of ${data.total} domains processed.`;
+                            if (!data.error) {
+                                downloadLink.style.display = 'inline-block';
+                            }
+                        } else {
+                            progressBarFill.textContent = '0%';
+                            progressText.textContent = 'Not started';
+                        }
+                        clearInterval(progressInterval);
+                    }
 
-    // Function to handle file selection
-    function handleFileSelection() {
-      const file = fileInput.files[0];
-      if (file) {
-        selectedFile.textContent = `Selected: ${file.name}`;
-        messageDiv.textContent = "Ready to analyze.";
-        progressDiv.style.width = '0%';
-        progressDiv.textContent = '0%';
-        errorMessageDiv.textContent = '';
-      }
-    }
-
-    let pollingInterval;
-    // Function to start polling for progress updates
-    function startPolling() {
-      pollingInterval = setInterval(async () => {
-        try {
-          const response = await fetch('/progress');  // Fetch progress from the server
-          const data = await response.json();  // Parse the JSON response
-          if (data.total) {
-            const percent = Math.round((data.completed / data.total) * 100);  // Calculate the percentage complete
-            progressDiv.style.width = `${percent}%`;  // Update the progress bar width
-            progressDiv.textContent = `${percent}%`;  // Update the progress bar text
-            statusDiv.textContent = data.processing
-              ? `Processing: ${data.completed} of ${data.total} domains reviewed...`  // Update the status message if processing
-              : `Processing complete: ${data.completed} of ${data.total} domains reviewed.`;  // Update the status message when processing is complete
-          }
-          if (!data.processing) {  // If processing is complete
-            clearInterval(pollingInterval);  // Stop the polling interval
-            downloadSection.style.display = 'block';  // Show the download button
-          }
-        } catch (err) {
-          console.error('Error polling progress:', err);
-          clearInterval(pollingInterval);
+                    if (data.rate_limit_status) {
+                        rateLimitStatusElement.textContent = data.rate_limit_status;
+                        rateLimitStatusElement.style.color = '#ffc107'; // Yellow for warning
+                    } else if (data.error) {
+                        rateLimitStatusElement.textContent = `Error: ${data.error}`;
+                        rateLimitStatusElement.style.color = '#d9534f'; // Red for error
+                        clearInterval(progressInterval);
+                    } else if (!data.processing && data.completed > 0) {
+                        rateLimitStatusElement.textContent = 'Processing complete.';
+                        rateLimitStatusElement.style.color = '#28a745'; // Green for success
+                    } else {
+                        rateLimitStatusElement.textContent = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching progress:', error);
+                    const rateLimitStatusElement = document.getElementById('rateLimitStatus');
+                    rateLimitStatusElement.textContent = 'Could not retrieve progress information.';
+                    rateLimitStatusElement.style.color = '#d9534f';
+                    clearInterval(progressInterval);
+                });
         }
-      }, 1000);
-    }
 
-    // Event listener for form submission
-    document.getElementById('uploadForm').onsubmit = async (e) => {
-      e.preventDefault();  // Prevent the default form submission behavior
-      const file = fileInput.files[0];
-      if (!file) return;
-      const formData = new FormData();
-      formData.append('file', file);
-
-      messageDiv.textContent = "Uploading and starting analysis...";
-      startButton.disabled = true;
-      progressDiv.style.width = '0%';
-      progressDiv.textContent = '0%';
-
-      try {
-        const response = await fetch('/', {
-          method: 'POST',
-          body: formData
+        // Start polling for progress if processing is ongoing on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/progress')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.processing) {
+                        progressInterval = setInterval(updateProgress, 2000);
+                    } else if (data.completed > 0 && !data.error) {
+                        const downloadLink = document.getElementById('downloadLink');
+                        downloadLink.style.display = 'inline-block';
+                    }
+                    updateProgress(); // Initial update
+                });
         });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
-        }
-        // Start polling for progress
-        startPolling();
-      } catch (err) {
-        console.error(err);
-        errorMessageDiv.textContent = `An error occurred: ${err.message}`;
-        messageDiv.textContent = 'Analysis failed.';
-        startButton.disabled = false;
-      }
-    };
 
-    // Event listener for download button click
-    downloadButton.addEventListener('click', async () => {
-      try {
-        const response = await fetch('/download_result');  // Fetch the result file from the server
-        if (!response.ok) {
-          throw new Error("Result not ready yet.");
-        }
-        const blob = await response.blob();  // Get the response as a Blob
-        const url = URL.createObjectURL(blob);  // Create a URL for the Blob
-        const a = document.createElement('a');  // Create an anchor element
-        a.href = url;  // Set the anchor's href to the Blob URL
-        a.download = 'legal_domain_results.csv';  // Set the download filename
-        document.body.appendChild(a);  // Append the anchor to the document
-        a.click();  // Simulate a click on the anchor to trigger the download
-        a.remove();  // Remove the anchor from the document
-        URL.revokeObjectURL(url);  // Release the Blob URL
-      } catch (err) {
-        alert(err.message);  // Display an error message if the download fails
-      }
-    });
-  </script>
+        // Start polling when form is submitted
+        document.querySelector('form').addEventListener('submit', function() {
+            // Prevent multiple intervals if the user submits again while processing
+            clearInterval(progressInterval);
+            progressInterval = setInterval(updateProgress, 2000);
+            // Reset UI for new submission
+            document.getElementById('progressBarFill').style.width = '0%';
+            document.getElementById('progressBarFill').textContent = '0%';
+            document.getElementById('progressText').textContent = 'Initializing...';
+            document.getElementById('rateLimitStatus').textContent = '';
+            document.getElementById('downloadLink').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
